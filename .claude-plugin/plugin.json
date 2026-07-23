@@ -1,0 +1,13 @@
+{
+  "name": "claude-qa-toolkit",
+  "version": "0.1.0",
+  "description": "QA engineering toolkit for Claude Code: disciplined session closing, deterministic flaky-test triage, and user-story-to-test-plan generation. Heuristics-first — no external service, no API key required.",
+  "author": {
+    "name": "Jérémy Bazan",
+    "url": "https://github.com/BazanJeremy"
+  },
+  "homepage": "https://github.com/BazanJeremy/claude-qa-toolkit",
+  "repository": "https://github.com/BazanJeremy/claude-qa-toolkit",
+  "license": "MIT",
+  "keywords": ["testing", "qa", "flaky-tests", "test-plan", "session-continuity", "claude-code"]
+}

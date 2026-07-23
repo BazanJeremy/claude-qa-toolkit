@@ -1,0 +1,16 @@
+{
+  "name": "claude-qa-toolkit",
+  "description": "Self-hosted marketplace for the claude-qa-toolkit plugin: QA engineering disciplines (session continuity, flaky-test triage, test-plan generation) packaged as Claude Code skills.",
+  "owner": {
+    "name": "Jérémy Bazan",
+    "url": "https://github.com/BazanJeremy"
+  },
+  "plugins": [
+    {
+      "name": "claude-qa-toolkit",
+      "source": "./",
+      "description": "QA engineering toolkit for Claude Code: disciplined session closing, deterministic flaky-test triage, and user-story-to-test-plan generation.",
+      "category": "testing"
+    }
+  ]
+}
