@@ -51,6 +51,19 @@ claude plugin install claude-qa-toolkit@claude-qa-toolkit --scope project
 Skills load on the next session and trigger automatically on the phrases
 above — no command to memorize.
 
+### Outside Claude Code
+
+All three skills follow the `SKILL.md` format and depend on no Claude
+Code-specific mechanism, so they also install into any agent that reads that
+format:
+
+```bash
+npx skills add BazanJeremy/claude-qa-toolkit
+```
+
+`npx skills` is a community installer, not a vendor channel: the marketplace
+route above remains the reference path.
+
 ## Design
 
 - **Deterministic first.** The `flaky-triage` heuristics (0.4/0.4/0.2

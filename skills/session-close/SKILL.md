@@ -1,7 +1,7 @@
 ---
 name: session-close
 description: This skill should be used when the user says "end of session", "close the session", "session close", "fin de session", "on clôture", announces a feature or work phase is finished, or when the conversation context is getting heavy and continuity must be preserved before clearing it. Updates the project's active-context file and append-only session journal so the next session resumes without re-discovery.
-version: 0.1.0
+version: 1.0.0
 ---
 
 # Session Close
@@ -27,7 +27,8 @@ Execute in order, without skipping a step.
 
 ### 1. Locate the continuity files
 
-- Check the project's `CLAUDE.md` for declared continuity file names or a
+- Check the project's agent instruction file (`CLAUDE.md`, `AGENTS.md`, or the
+  equivalent for the harness in use) for declared continuity file names or a
   session-close convention. Honor it if present.
 - Otherwise look at the repository root for common names:
   `ACTIVE-CONTEXT.md`, `CONTEXTE-ACTIF.md` (active context) and

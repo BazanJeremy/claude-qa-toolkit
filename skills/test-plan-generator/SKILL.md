@@ -1,7 +1,7 @@
 ---
 name: test-plan-generator
 description: This skill should be used when the user asks to "generate a test plan", "write test cases for this user story", "what should we test here", or provides a user story, acceptance criteria, or feature description that needs structured test coverage. Produces a risk-prioritized test plan with full traceability from acceptance criteria to test cases.
-version: 0.1.0
+version: 1.0.0
 ---
 
 # Test Plan Generator
