@@ -1,7 +1,7 @@
 ---
 name: flaky-triage
 description: This skill should be used when the user asks to "triage flaky tests", "analyze test instability", "which tests are flaky", "why does this test fail intermittently", or provides CI test history (JUnit XML reports, CI run logs) to classify unstable tests. Applies deterministic scoring before any narrative and reports "unknown" below the evidence threshold instead of guessing.
-version: 0.1.0
+version: 1.0.0
 ---
 
 # Flaky Test Triage

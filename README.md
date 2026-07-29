@@ -52,6 +52,19 @@ Les skills se chargent à la session suivante et se déclenchent
 automatiquement sur les phrases indiquées ci-dessus — aucune commande à
 mémoriser.
 
+### Hors Claude Code
+
+Les trois skills respectent le format `SKILL.md` et ne dépendent d'aucun
+mécanisme propre à Claude Code. Ils s'installent donc aussi dans les agents
+qui lisent ce format :
+
+```bash
+npx skills add BazanJeremy/claude-qa-toolkit
+```
+
+`npx skills` est un installeur communautaire, pas un canal officiel : la voie
+marketplace ci-dessus reste la voie de référence.
+
 ## Conception
 
 - **Déterministe d'abord.** Les heuristiques de `flaky-triage` (pondérations
