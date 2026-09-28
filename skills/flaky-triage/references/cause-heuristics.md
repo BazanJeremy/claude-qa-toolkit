@@ -1,7 +1,7 @@
 # Cause Heuristics — Evidence Signatures and Corrective Actions
 
 Score each cause family independently against the observed history; the
-strongest signal wins. Below 0.5 confidence, classify as `unknown`.
+strongest signal wins. Below 0.4 confidence, classify as `unknown`.
 
 ## timing / async
 
@@ -76,7 +76,7 @@ strongest signal wins. Below 0.5 confidence, classify as `unknown`.
 
 ## unknown
 
-When no signature reaches 0.5 confidence: report `unknown`, list the
+When no signature reaches 0.4 confidence: report `unknown`, list the
 evidence that was considered, and recommend the cheapest discriminating
 experiment (usually: run alone × 20, then randomized order × 20) rather than
 a speculative fix.

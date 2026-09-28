@@ -29,7 +29,7 @@ associés (voir plus bas) : **le déterministe décide, la narration explique.**
 | Skill | Déclenchement | Ce qu'il garantit |
 |---|---|---|
 | `session-close` | « fin de session », « on clôture », feature terminée | Réécriture complète du fichier de contexte actif (≤ 40 lignes) + journal append-only : la session suivante démarre sur des faits |
-| `flaky-triage` | historique CI fourni, « quels tests sont flaky ? » | Score sur 3 signaux (intermittence, bascule, durée), cause probable seuillée par la confiance — `unknown` plutôt qu'une invention, minimum 4 runs |
+| `flaky-triage` | historique CI fourni, « quels tests sont flaky ? » | Score sur 3 signaux (intermittence, bascule, durée), cause probable seuillée par la confiance — `unknown` plutôt qu'une invention, score amorti sous 4 runs |
 | `test-plan-generator` | user story fournie, « génère le plan de test » | Cas nominaux/négatifs/limites priorisés par le risque, matrice de traçabilité AC → cas, ambiguïtés remontées en questions ouvertes |
 
 ## Installation
@@ -68,7 +68,7 @@ marketplace ci-dessus reste la voie de référence.
 ## Conception
 
 - **Déterministe d'abord.** Les heuristiques de `flaky-triage` (pondérations
-  0.4/0.4/0.2, amortissement sous 4 runs, plancher de confiance 0.5) sont
+  0.4/0.4/0.2, amortissement sous 4 runs, plancher de confiance 0.4) sont
   celles éprouvées dans [FlakySense](https://github.com/BazanJeremy/flakysense) ;
   le skill applique la méthode là où l'outil applique le code.
 - **L'ambiguïté est un livrable.** `test-plan-generator` transforme chaque
