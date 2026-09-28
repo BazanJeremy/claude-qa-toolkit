@@ -29,7 +29,7 @@ below: **deterministic rules decide, narrative explains.**
 | Skill | Triggers on | What it guarantees |
 |---|---|---|
 | `session-close` | "end of session", "fin de session", feature finished | Full rewrite of the active-context file (≤ 40 lines) + append-only journal: the next session starts from facts |
-| `flaky-triage` | CI history provided, "which tests are flaky?" | Score over 3 signals (intermittency, flip rate, duration), confidence-gated probable cause — `unknown` over invention, 4-run minimum |
+| `flaky-triage` | CI history provided, "which tests are flaky?" | Score over 3 signals (intermittency, flip rate, duration), confidence-gated probable cause — `unknown` over invention, score damped under 4 runs |
 | `test-plan-generator` | user story provided, "generate the test plan" | Risk-prioritized nominal/negative/boundary cases, AC → case traceability matrix, ambiguities surfaced as open questions |
 
 ## Installation
@@ -67,7 +67,7 @@ route above remains the reference path.
 ## Design
 
 - **Deterministic first.** The `flaky-triage` heuristics (0.4/0.4/0.2
-  weights, dampening under 4 runs, 0.5 confidence floor) are the ones proven
+  weights, dampening under 4 runs, 0.4 confidence floor) are the ones proven
   in [FlakySense](https://github.com/BazanJeremy/flakysense); the skill
   applies the method where the tool applies the code.
 - **Ambiguity is a deliverable.** `test-plan-generator` turns every unclear

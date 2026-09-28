@@ -1,7 +1,7 @@
 ---
 name: flaky-triage
 description: This skill should be used when the user asks to "triage flaky tests", "analyze test instability", "which tests are flaky", "why does this test fail intermittently", or provides CI test history (JUnit XML reports, CI run logs) to classify unstable tests. Applies deterministic scoring before any narrative and reports "unknown" below the evidence threshold instead of guessing.
-version: 1.0.1
+version: 1.0.2
 ---
 
 # Flaky Test Triage
@@ -20,10 +20,10 @@ explains.
 ### 1. Gather run history
 
 Collect results for the same test suite across multiple runs: JUnit XML
-files, CI logs, or a pasted pass/fail history. **A minimum of 4 runs is
-required for a confident verdict.** With fewer, report "insufficient history
-(N runs, 4 needed)" for the affected tests and stop — never extrapolate
-flakiness from a single report.
+files, CI logs, or a pasted pass/fail history. A single report cannot show
+flakiness — nothing can alternate: report "insufficient history (1 run)" and
+stop. Below 4 runs, score anyway: the score is damped (step 2), and the
+triage states that the history is thin (N runs, 4 for an undamped score).
 
 For each test and run, extract: outcome (pass/fail/error/skip), duration,
 and position in the suite if available.
@@ -32,13 +32,17 @@ and position in the suite if available.
 
 Compute a flakiness score in [0, 1] from three signals. Compute it with
 code (a short script over the parsed runs), not by estimation, so the same
-history always yields the same score:
+history always yields the same score. Use the terminal runs in chronological
+order (skips excluded; fail and error both count as failures):
 
 | Signal | Weight | Reading |
 |---|---|---|
-| Intermittency | 0.4 | Maximal near 50 % failure rate. A test failing 100 % of runs is **broken, not flaky** — score it 0 and route it to normal debugging. |
-| Flip rate | 0.4 | Pass/fail alternations between consecutive runs, normalized by opportunities to flip. |
-| Duration instability | 0.2 | Relative dispersion of execution times (coefficient of variation). |
+| Intermittency | 0.4 | `4 × p × (1 − p)`, p = failure ratio: maximal at 50 %. A test failing 100 % of runs is **broken, not flaky** — score it 0 and route it to normal debugging. |
+| Flip rate | 0.4 | Pass/fail changes between consecutive runs ÷ (runs − 1). |
+| Duration instability | 0.2 | Coefficient of variation of durations (population standard deviation ÷ mean), capped at 1. |
+
+Score = weighted sum × min(1, runs ÷ 4): a history under 4 runs is damped,
+never refused.
 
 Treat scores ≥ 0.5 as flaky, 0.2–0.5 as suspect (monitor, do not quarantine
 yet), < 0.2 as stable noise.
@@ -47,9 +51,11 @@ yet), < 0.2 as stable noise.
 
 Score each cause hypothesis independently against the evidence signatures in
 `references/cause-heuristics.md` (timing/async, test ordering/shared state,
-environment, resource contention). The strongest signal wins. **Below the
-confidence floor of 0.5, answer `unknown` — never guess.** An honest
-`unknown` with evidence is more useful than a confident fabrication.
+environment, resource contention). The strongest signal wins. A single
+failing run is never enough for a diagnosis: with only one failure, halve
+the confidence. **Below the confidence floor of 0.4, answer `unknown` —
+never guess.** An honest `unknown` with evidence is more useful than a
+confident fabrication.
 
 ### 4. Render the triage
 
