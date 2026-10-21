@@ -101,6 +101,7 @@ These tools share the same principles: **deterministic first, AI where it adds v
 | [Anomaly Sentinel](https://github.com/BazanJeremy/anomaly-sentinel) | Testing anomaly-detection AIs (medtech · fintech) |
 | [TestScribe](https://github.com/BazanJeremy/testscribe) | AI-assisted bug report enrichment |
 | [SkyGuard](https://github.com/BazanJeremy/skyguard) | Security quality gate for avionics-critical systems |
+| [loadlens](https://github.com/BazanJeremy/loadlens) | Reasoned performance verdict from load tests |
 
 ## Author
 
