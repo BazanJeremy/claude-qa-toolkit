@@ -68,7 +68,8 @@ marketplace ci-dessus reste la voie de référence.
 ## Conception
 
 - **Déterministe d'abord.** Les heuristiques de `flaky-triage` (pondérations
-  0.4/0.4/0.2, amortissement sous 4 runs, plancher de confiance 0.4) sont
+  0.4/0.4/0.2, amortissement sous 4 runs, seuil de détection 0.3, signatures
+  de cause et leurs forces, plancher de confiance 0.4) sont
   celles éprouvées dans [FlakySense](https://github.com/BazanJeremy/flakysense) ;
   le skill applique la méthode là où l'outil applique le code.
 - **L'ambiguïté est un livrable.** `test-plan-generator` transforme chaque
