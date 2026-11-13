@@ -67,7 +67,8 @@ route above remains the reference path.
 ## Design
 
 - **Deterministic first.** The `flaky-triage` heuristics (0.4/0.4/0.2
-  weights, dampening under 4 runs, 0.4 confidence floor) are the ones proven
+  weights, dampening under 4 runs, 0.3 detection threshold, cause signatures
+  and their strengths, 0.4 confidence floor) are the ones proven
   in [FlakySense](https://github.com/BazanJeremy/flakysense); the skill
   applies the method where the tool applies the code.
 - **Ambiguity is a deliverable.** `test-plan-generator` turns every unclear

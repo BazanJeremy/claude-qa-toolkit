@@ -1,7 +1,7 @@
 ---
 name: flaky-triage
 description: This skill should be used when the user asks to "triage flaky tests", "analyze test instability", "which tests are flaky", "why does this test fail intermittently", or provides CI test history (JUnit XML reports, CI run logs) to classify unstable tests. Applies deterministic scoring before any narrative and reports "unknown" below the evidence threshold instead of guessing.
-version: 1.0.2
+version: 1.0.3
 ---
 
 # Flaky Test Triage
@@ -26,7 +26,8 @@ stop. Below 4 runs, score anyway: the score is damped (step 2), and the
 triage states that the history is thin (N runs, 4 for an undamped score).
 
 For each test and run, extract: outcome (pass/fail/error/skip), duration,
-and position in the suite if available.
+failure message, position in the suite, and the environment properties the
+report carries (runner, OS, image…), when available.
 
 ### 2. Score each unstable test
 
@@ -37,25 +38,27 @@ order (skips excluded; fail and error both count as failures):
 
 | Signal | Weight | Reading |
 |---|---|---|
-| Intermittency | 0.4 | `4 × p × (1 − p)`, p = failure ratio: maximal at 50 %. A test failing 100 % of runs is **broken, not flaky** — score it 0 and route it to normal debugging. |
+| Intermittency | 0.4 | `4 × p × (1 − p)`, p = failure ratio: maximal at 50 %. A test failing 100 % of runs is **broken, not flaky**: intermittency and flip rate are both 0, so its score cannot exceed 0.2 and stays under the detection threshold — route it to normal debugging. |
 | Flip rate | 0.4 | Pass/fail changes between consecutive runs ÷ (runs − 1). |
 | Duration instability | 0.2 | Coefficient of variation of durations (population standard deviation ÷ mean), capped at 1. |
 
 Score = weighted sum × min(1, runs ÷ 4): a history under 4 runs is damped,
 never refused.
 
-Treat scores ≥ 0.5 as flaky, 0.2–0.5 as suspect (monitor, do not quarantine
-yet), < 0.2 as stable noise.
+Treat scores ≥ 0.3 as flaky: that is the detection threshold. Below 0.3 a
+test is not flagged, and there is no intermediate tier.
 
 ### 3. Classify the probable cause
 
 Score each cause hypothesis independently against the evidence signatures in
 `references/cause-heuristics.md` (timing/async, test ordering/shared state,
-environment, resource contention). The strongest signal wins. A single
-failing run is never enough for a diagnosis: with only one failure, halve
-the confidence. **Below the confidence floor of 0.4, answer `unknown` —
-never guess.** An honest `unknown` with evidence is more useful than a
-confident fabrication.
+environment, resource contention). Each signature has a fixed strength,
+listed there; apply only those signatures, exactly as written. The strongest
+signal wins; on a tie, the first in that order wins. Confidence = winning
+strength × min(1, failing runs ÷ 2): a single failing run is never enough
+for a diagnosis, so it halves the confidence. **Below the confidence floor
+of 0.4, answer `unknown` — never guess.** An honest `unknown` with evidence
+is more useful than a confident fabrication.
 
 ### 4. Render the triage
 
@@ -69,7 +72,7 @@ Output one block per flagged test:
 ```
 
 Order by descending score. Close with a one-line suite summary
-(N tests analyzed across M runs: K flaky, J suspect).
+(N tests analyzed across M runs: K flaky).
 
 ## Rules
 

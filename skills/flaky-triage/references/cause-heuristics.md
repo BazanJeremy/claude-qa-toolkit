@@ -1,16 +1,27 @@
 # Cause Heuristics — Evidence Signatures and Corrective Actions
 
-Score each cause family independently against the observed history; the
-strongest signal wins. Below 0.4 confidence, classify as `unknown`.
+Score each cause family independently against the observed history, using
+only the signatures below, each at its fixed strength. The strongest signal
+wins; on a tie, the first family in this file's order wins.
+Confidence = winning strength × min(1, failing runs ÷ 2). Below 0.4
+confidence, classify as `unknown`.
+
+Keywords are case-insensitive substrings of a failing run's message. Anything
+outside these signatures may be quoted as context, but it is not evidence and
+adds no confidence.
+
+These signatures, strengths and keyword lists mirror FlakySense's rule-based
+classifier (`src/flakysense/agents/classifier.py`, commit `db1a845`).
 
 ## timing / async
 
 **Evidence signature**
-- Failure messages mention timeouts, waits, sleeps, "element not found",
-  "connection refused then succeeded".
-- Duration of failing runs deviates strongly from passing runs (often
-  longer — waits exhausted).
-- Failures uncorrelated with suite position or environment.
+- Keyword: a failing run's message contains `timeout`, `timed out` or
+  `deadline`.
+- Duration outlier: every failing run is slower than the slowest passing
+  run (needs at least one passing run with a non-zero duration).
+- Strength: 0.85 when both hold, 0.7 for the duration outlier alone, 0.5
+  for the keyword alone.
 
 **Confirmation protocol**
 - Re-run the test alone under artificial load or reduced CPU; flakiness
@@ -25,11 +36,10 @@ strongest signal wins. Below 0.4 confidence, classify as `unknown`.
 ## ordering / shared state
 
 **Evidence signature**
-- Failures cluster at specific suite positions (fails at position k, passes
-  at position j) or only after specific predecessor tests.
-- Test passes in isolation, fails in the full suite (or the reverse).
-- Assertions on state the test did not itself create (caches, singletons,
-  database rows, files).
+- Position split: with at least 2 failing runs and 2 passing runs, the
+  suite positions where the test fails and those where it passes never
+  overlap (fails at position k, passes at position j).
+- Strength: 0.8.
 
 **Confirmation protocol**
 - Run the test alone, then under randomized ordering (e.g. pytest-randomly);
@@ -43,10 +53,11 @@ strongest signal wins. Below 0.4 confidence, classify as `unknown`.
 ## environment
 
 **Evidence signature**
-- Failures correlate with a runner, OS, container image, region, or time of
-  day — not with code or ordering.
-- Messages mention missing env vars, DNS, locale, filesystem paths,
-  clock/timezone.
+- Environment split: with at least 2 failing runs and 1 passing run, an
+  environment property recorded on every failing run (runner, OS, container
+  image…) has one single value across all failures, and no passing run
+  carries that value.
+- Strength: 0.9.
 
 **Confirmation protocol**
 - Compare pass/fail distribution across runners or images; re-run on the
@@ -60,11 +71,9 @@ strongest signal wins. Below 0.4 confidence, classify as `unknown`.
 ## resource contention
 
 **Evidence signature**
-- Failures correlate with parallel execution, shared ports, database locks,
-  quota or rate-limit errors.
-- Duration instability high across the whole suite, not just one test.
-- Messages mention "address already in use", deadlocks, connection pool
-  exhaustion.
+- Keyword: a failing run's message contains `locked`, `deadlock`,
+  `connection refused`, `address already in use` or `resource busy`.
+- Strength: 0.5.
 
 **Confirmation protocol**
 - Run serially; if flakiness disappears, contention is confirmed.
@@ -77,6 +86,7 @@ strongest signal wins. Below 0.4 confidence, classify as `unknown`.
 ## unknown
 
 When no signature reaches 0.4 confidence: report `unknown`, list the
-evidence that was considered, and recommend the cheapest discriminating
-experiment (usually: run alone × 20, then randomized order × 20) rather than
-a speculative fix.
+evidence that was considered, and recommend quarantining the test while
+collecting more run history until a cause signal emerges — never a
+speculative fix. The cheapest way to collect it is usually: run alone × 20,
+then randomized order × 20.
